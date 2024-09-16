@@ -147,6 +147,7 @@
                 android:layout_marginVertical="@dimen/poster_default_margin"
                 android:progressTint="@color/rating_first"
                 android:secondaryProgressTint="@color/rating_second"
+                android:isIndicator="true"
                 android:stepSize="0.5"
                 tools:rating="3.7"/>
         </RelativeLayout>

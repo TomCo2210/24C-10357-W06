@@ -1,5 +1,6 @@
 package dev.tomco.a24c_10357_w06.adapters
 
+import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,10 @@ import dev.tomco.a24c_10357_w06.R
 import dev.tomco.a24c_10357_w06.databinding.HorizontalMovieItemBinding
 import dev.tomco.a24c_10357_w06.interfaces.MovieCallback
 import dev.tomco.a24c_10357_w06.models.Movie
+import dev.tomco.a24c_10357_w06.utilities.Constants
 import java.time.format.DateTimeFormatter
+import java.util.function.Consumer
+import kotlin.math.max
 
 class MovieAdapter(
     private val movies: List<Movie>
@@ -45,7 +49,70 @@ class MovieAdapter(
                 ImageLoader.getInstance().load(poster, binding.movieIMGPoster)
                 if (isFavorite) binding.movieIMGFavorite.setImageResource(R.drawable.heart)
                 else binding.movieIMGFavorite.setImageResource(R.drawable.empty_heart)
-
+                binding.movieCVData.setOnClickListener {
+                    val animatorSet = ArrayList<ObjectAnimator>()
+                    if (isCollapsed) {
+                        animatorSet
+                            .add(
+                                ObjectAnimator
+                                    .ofInt(
+                                        binding.movieLBLActors,
+                                        "maxLines",
+                                        binding.movieLBLActors.lineCount
+                                    ).setDuration(
+                                        (max(
+                                            (binding.movieLBLActors.lineCount - Constants.Animation.ACTORS_LIST_MIN_LINE).toDouble(),
+                                            0.0
+                                        ) * 50L).toLong()
+                                    )
+                            )
+                        animatorSet
+                            .add(
+                                ObjectAnimator
+                                    .ofInt(
+                                        binding.movieLBLOverview,
+                                        "maxLines",
+                                        binding.movieLBLOverview.lineCount
+                                    ).setDuration(
+                                        (max(
+                                            (binding.movieLBLOverview.lineCount - Constants.Animation.OVWERVIEW_MIN_LINES).toDouble(),
+                                            0.0
+                                        ) * 50L).toLong()
+                                    )
+                            )
+                    } else {
+                        animatorSet
+                            .add(
+                                ObjectAnimator
+                                    .ofInt(
+                                        binding.movieLBLActors,
+                                        "maxLines",
+                                        Constants.Animation.ACTORS_LIST_MIN_LINE
+                                    ).setDuration(
+                                        (max(
+                                            (binding.movieLBLActors.lineCount - Constants.Animation.ACTORS_LIST_MIN_LINE).toDouble(),
+                                            0.0
+                                        ) * 50L).toLong()
+                                    )
+                            )
+                        animatorSet
+                            .add(
+                                ObjectAnimator
+                                    .ofInt(
+                                        binding.movieLBLOverview,
+                                        "maxLines",
+                                        Constants.Animation.OVWERVIEW_MIN_LINES
+                                    ).setDuration(
+                                        (max(
+                                            (binding.movieLBLOverview.lineCount - Constants.Animation.OVWERVIEW_MIN_LINES).toDouble(),
+                                            0.0
+                                        ) * 50L).toLong()
+                                    )
+                            )
+                    }
+                    toggleCollapse()
+                    animatorSet.forEach(Consumer { obj: ObjectAnimator -> obj.start() })
+                }
             }
         }
     }
@@ -53,7 +120,7 @@ class MovieAdapter(
     inner class MovieViewHolder(val binding: HorizontalMovieItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.movieIMGFavorite.setOnClickListener { v: View ->
+            binding.movieIMGFavorite.setOnClickListener {
                 if (movieCallback != null)
                     movieCallback!!.favoriteButtonClicked(
                         getItem(adapterPosition),

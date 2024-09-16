@@ -5,8 +5,8 @@
 * RecyclerView ViewHolder
 * View Binding
 * Callbacks
-
-* Sounds
 * Animations
+* Object Animators
 * Lottie
 * Splash Screen
+* Sounds
